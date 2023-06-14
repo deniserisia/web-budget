@@ -99,7 +99,6 @@ public class Closing extends PersistentEntity {
         this.accumulated = BigDecimal.ZERO;
         this.creditCardExpenses = BigDecimal.ZERO;
         this.debitCardExpenses = BigDecimal.ZERO;
-
         this.closingDate = LocalDate.now();
     }
 }
