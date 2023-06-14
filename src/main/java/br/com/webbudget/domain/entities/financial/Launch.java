@@ -19,10 +19,7 @@ package br.com.webbudget.domain.entities.financial;
 import br.com.webbudget.domain.entities.PersistentEntity;
 import br.com.webbudget.domain.entities.registration.FinancialPeriod;
 import br.com.webbudget.infrastructure.utils.RandomCode;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
@@ -32,16 +29,19 @@ import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL_AUDIT;
 @Entity
 @Audited
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@Data // Gera automaticamente getters, setters, equals, hashCode e toString
 @Table(name = "launches", schema = FINANCIAL)
 @AuditTable(value = "launches", schema = FINANCIAL_AUDIT)
 public class Launch extends PersistentEntity {
 
-    @Column(name = "code", nullable = false, length = 6, unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 6, unique = true)
     private String code;
 
-    @Column(name = "quote_number", length = 6)
+    @Column(length = 6)
     private Integer quoteNumber;
 
     @ManyToOne(optional = false)
@@ -58,14 +58,5 @@ public class Launch extends PersistentEntity {
 
     public Launch() {
         this.code = RandomCode.alphanumeric(6);
-    }
-
-    public boolean isLastQuote() {
-        return this.fixedMovement.getTotalQuotes() == this.quoteNumber;
-    }
-
-    // Extrair a lógica para um novo método
-    public boolean isLastQuoteOfFixedMovement() {
-        return fixedMovement.getTotalQuotes().equals(quoteNumber);
     }
 }
