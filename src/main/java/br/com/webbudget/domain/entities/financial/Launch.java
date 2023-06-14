@@ -59,4 +59,12 @@ public class Launch extends PersistentEntity {
     public Launch() {
         this.code = RandomCode.alphanumeric(6);
     }
+    public boolean isLastQuote() {
+        return this.fixedMovement.getTotalQuotes() == this.quoteNumber;
+    }
+
+    // Extrair a lógica para um novo método
+    public boolean isLastQuoteOfFixedMovement() {
+        return fixedMovement.getTotalQuotes().equals(quoteNumber);
+    }
 }
