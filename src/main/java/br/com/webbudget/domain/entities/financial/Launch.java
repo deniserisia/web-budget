@@ -30,15 +30,6 @@ import javax.persistence.*;
 
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL_AUDIT;
-
-/**
- * The representation of a {@link FixedMovement} launch in a given {@link FinancialPeriod}
- *
- * @author Arthur Gregorio
- *
- * @version 1.1.0
- * @since 2.1.0, 21/09/2015
- */
 @Entity
 @Audited
 @ToString(callSuper = true)
@@ -47,43 +38,34 @@ import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL_AUD
 @AuditTable(value = "launches", schema = FINANCIAL_AUDIT)
 public class Launch extends PersistentEntity {
 
-    @Getter
     @Column(name = "code", nullable = false, length = 6, unique = true)
     private String code;
-    @Getter
-    @Setter
+
     @Column(name = "quote_number", length = 6)
     private Integer quoteNumber;
 
-    @Getter
-    @Setter
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_financial_period", nullable = false)
     private FinancialPeriod financialPeriod;
-    @Getter
-    @Setter
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_fixed_movement", nullable = false)
     private FixedMovement fixedMovement;
-    @Getter
-    @Setter
+
     @OneToOne(optional = false)
     @JoinColumn(name = "id_period_movement", nullable = false)
     private PeriodMovement periodMovement;
 
-    /**
-     * Constructor...
-     */
     public Launch() {
         this.code = RandomCode.alphanumeric(6);
     }
 
-    /**
-     * Method used to check if this is the last launch of the {@link FixedMovement}
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isLastQuote() {
         return this.fixedMovement.getTotalQuotes() == this.quoteNumber;
+    }
+
+    // Extrair a lógica para um novo método
+    public boolean isLastQuoteOfFixedMovement() {
+        return fixedMovement.getTotalQuotes().equals(quoteNumber);
     }
 }
