@@ -152,12 +152,35 @@ public class Refueling extends PersistentEntity {
         totalsFuels();
     }
 
-    // Restante dos métodos...
 
     private void totalsFuels() {
         calculateTotalCost();
         calculateTotalLiters();
         calculateCostPerLiter();
+    }
+    public String getVehicleIdentification() {
+        return vehicle.getIdentification();
+    }
+
+    public CostCenter getCostCenter() {
+        return vehicle.getCostCenter();
+    }
+
+    public String getMovementDescription() {
+        return vehicle.getIdentification() + " - " + movementClass.getName() + ", " +
+                NumberFormat.getNumberInstance().format(liters) + "lts";
+    }
+
+    public void updateVehicleOdometer() {
+        vehicle.setOdometer(odometer);
+    }
+
+    public void calculateDistance(long lastOdometer) {
+        distance = firstRefueling ? 0 : odometer - lastOdometer;
+    }
+
+    public boolean isFinancialMovementPresent() {
+        return periodMovement != null;
     }
 
     private void calculateTotalCost() {
