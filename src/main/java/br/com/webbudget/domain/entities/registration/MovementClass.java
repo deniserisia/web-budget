@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2014 Arthur Gregorio, AG.Software
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package br.com.webbudget.domain.entities.registration;
 
 import br.com.webbudget.domain.entities.PersistentEntity;
@@ -34,7 +18,12 @@ import static br.com.webbudget.infrastructure.utils.DefaultSchemes.REGISTRATION;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.REGISTRATION_AUDIT;
 
 /**
- * The representation of a movement class in the application
+ * Represents a movement class in the application.
+ * Stores information about the class name, budget, active status, type, cost center, and total movements.
+ * Handles operations related to the class.
+ *
+ * This class is used to define various types of movements, such as revenue or expenses.
+ * Each movement class is associated with a cost center.
  *
  * @author Arthur Gregorio
  *
@@ -54,15 +43,18 @@ public class MovementClass extends PersistentEntity {
     @NotBlank(message = "{movement-class.name}")
     @Column(name = "name", nullable = false, length = 45)
     private String name;
+
     @Getter
     @Setter
     @Column(name = "budget")
     @NotNull(message = "{movement-class.budget}")
     private BigDecimal budget;
+
     @Getter
     @Setter
     @Column(name = "active", nullable = false)
     private boolean active;
+
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
@@ -83,7 +75,8 @@ public class MovementClass extends PersistentEntity {
     private BigDecimal totalMovements;
 
     /**
-     * Default constructor
+     * Default constructor.
+     * Sets the initial values for active, budget, and totalMovements.
      */
     public MovementClass() {
         this.active = true;
@@ -92,39 +85,38 @@ public class MovementClass extends PersistentEntity {
     }
 
     /**
-     * To check if is a revenue class
+     * Checks if this is a revenue class.
      *
-     * @return true for revenue class, false otherwise
+     * @return true if it is a revenue class, false otherwise
      */
     public boolean isRevenue() {
         return this.movementClassType == MovementClassType.REVENUE;
     }
 
     /**
-     * To check if is a expense class
+     * Checks if this is an expense class.
      *
-     * @return true for expenses class, false otherwise
+     * @return true if it is an expense class, false otherwise
      */
     public boolean isExpense() {
         return this.movementClassType == MovementClassType.EXPENSE;
     }
 
     /**
-     * Method to check if the budget of this class is over the maximum value
+     * Checks if the budget of this class is exceeded.
      *
-     * @return true if the budget is over the maximum, false otherwise
+     * @return true if the budget is exceeded, false otherwise
      */
     public boolean isOverBudget() {
         return this.totalMovements.compareTo(this.budget) >= 0;
     }
 
     /**
-     * Method used in the UI to draw the graphic to show the user how many percents of the class budget is already used
+     * Calculates the budget completion percentage for this class.
      *
-     * @return the budget consume percentage
+     * @return the budget completion percentage
      */
     public int budgetCompletionPercentage() {
-
         BigDecimal percentage = BigDecimal.ZERO;
 
         if (this.isOverBudget()) {
