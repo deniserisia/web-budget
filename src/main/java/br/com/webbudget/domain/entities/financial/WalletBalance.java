@@ -87,22 +87,20 @@ public class WalletBalance extends PersistentEntity {
     private Wallet wallet;
 
     public void processBalances() {
-        BigDecimal oldBalance = this.wallet.getActualBalance();
+        BigDecimal oldBalance = wallet.getActualBalance();
         BigDecimal newBalance = calculateNewBalance(oldBalance);
-
-        updateBalances(oldBalance, newBalance);
+        updateBalances(newBalance);
     }
 
     private BigDecimal calculateNewBalance(BigDecimal oldBalance) {
-        return oldBalance.add(this.transactionValue);
+        return oldBalance.add(transactionValue);
     }
 
-    private void updateBalances(BigDecimal oldBalance, BigDecimal newBalance) {
-        this.oldBalance = oldBalance;
-        this.actualBalance = newBalance;
-        this.wallet.setActualBalance(newBalance);
+    private void updateBalances(BigDecimal newBalance) {
+        oldBalance = wallet.getActualBalance();
+        actualBalance = newBalance;
+        wallet.setActualBalance(newBalance);
     }
-
     public LocalDate getMovementDate() {
         return this.movementDateTime.toLocalDate();
     }
