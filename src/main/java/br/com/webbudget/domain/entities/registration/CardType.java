@@ -16,14 +16,6 @@
  */
 package br.com.webbudget.domain.entities.registration;
 
-/**
- * The enum with the possible types of a {@link Card}
- *
- * @author Arthur Gregorio
- *
- * @version 1.0.0
- * @since 1.0.0, 03/04/2014
- */
 public enum CardType {
 
     DEBIT("card-type.debit"),
@@ -31,20 +23,10 @@ public enum CardType {
 
     private final String description;
 
-    /**
-     * Default constructor
-     *
-     * @param description the description for this enum, also is the i18n key
-     */
     CardType(String description) {
         this.description = description;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
     @Override
     public String toString() {
         return this.description;
