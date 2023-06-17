@@ -46,6 +46,7 @@ public class Apportionment extends PersistentEntity {
     @Getter
     @Column(name = "code", nullable = false, length = 6, unique = true)
     private String code;
+
     @Getter
     @Setter
     @NotNull(message = "{apportionment.value}")
@@ -57,12 +58,14 @@ public class Apportionment extends PersistentEntity {
     @ManyToOne
     @JoinColumn(name = "id_movement", nullable = false)
     private Movement movement;
+
     @Getter
     @Setter
     @ManyToOne
     @NotNull(message = "{apportionment.cost-center}")
     @JoinColumn(name = "id_cost_center", nullable = false)
     private CostCenter costCenter;
+
     @Getter
     @Setter
     @ManyToOne
@@ -73,7 +76,6 @@ public class Apportionment extends PersistentEntity {
     public Apportionment() {
         this.code = RandomCode.alphanumeric(6);
     }
-
     public Apportionment(BigDecimal value) {
         this();
         this.value = value;
@@ -84,7 +86,6 @@ public class Apportionment extends PersistentEntity {
         this.movementClass = movementClass;
         this.costCenter = movementClass.getCostCenter();
     }
-
     public boolean isRevenue() {
         return this.movementClass.isRevenue();
     }
@@ -99,12 +100,11 @@ public class Apportionment extends PersistentEntity {
     public String getCostCenterName() {
         return this.costCenter != null ? this.costCenter.getName() : "";
     }
-
     public boolean isCostCenterAndMovementClassEquals(Apportionment apportionment) {
         return apportionment.getCostCenter().equals(this.costCenter)
                 && apportionment.getMovementClass().equals(this.movementClass);
     }
-    public static Apportionment copyOf(Apportionment toCopy){
+    public static Apportionment copyOf(Apportionment toCopy) {
         return new Apportionment(toCopy.getValue(), toCopy.getMovementClass());
     }
 }
