@@ -200,20 +200,10 @@ public class Refueling extends PersistentEntity {
         return this.vehicle.getIdentification();
     }
 
-    /**
-     * Get the {@link Vehicle} {@link CostCenter}
-     *
-     * @return the {@link Vehicle} {@link CostCenter}
-     */
     public CostCenter getCostCenter() {
         return this.getVehicle().getCostCenter();
     }
 
-    /**
-     * This is a helper method to check if the {@link Fuel} is ok the there are at least one informed
-     *
-     * @return true or false for a valid or invalid list of {@link Fuel}
-     */
     public boolean isFuelsValid() {
         return this.fuels.stream()
                 .filter(Fuel::isInvalid)
@@ -221,35 +211,33 @@ public class Refueling extends PersistentEntity {
                 .isEmpty();
     }
 
-    /**
-     * Totals the values of the fuels based on the total in liters multiplied by the cost by liter
-     */
     public void totalsFuels() {
+        calculateTotalCost();
+        calculateTotalLiters();
+        calculateCostPerLiter();
+    }
 
-        // calculate the total cost
-        this.cost = this.fuels
-                .stream()
+    private void calculateTotalCost() {
+        cost = fuels.stream()
                 .map(Fuel::getCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-        // calculate the total of liters stocked
-        this.liters = this.fuels
-                .stream()
+    private void calculateTotalLiters() {
+        liters = fuels.stream()
                 .map(Fuel::getLiters)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-        // calculate the cost per liter
-        if (!this.cost.equals(BigDecimal.ZERO) && !this.liters.equals(BigDecimal.ZERO)) {
-            this.costPerLiter = this.cost.divide(this.liters, RoundingMode.CEILING);
+    private void calculateCostPerLiter() {
+        if (!cost.equals(BigDecimal.ZERO) && !liters.equals(BigDecimal.ZERO)) {
+            costPerLiter = cost.divide(liters, RoundingMode.CEILING);
         } else {
-            this.costPerLiter = BigDecimal.ZERO;
+            costPerLiter = BigDecimal.ZERO;
         }
     }
 
-    /**
-     * Same as the {@link #calculateAverageConsumption(long, BigDecimal)} but this method use the internal values of
-     * this {@link Refueling}
-     */
+
     public void calculateAverageConsumption() {
         this.calculateAverageConsumption(this.distance, this.liters);
     }

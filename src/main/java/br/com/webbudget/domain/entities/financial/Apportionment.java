@@ -76,16 +76,14 @@ public class Apportionment extends PersistentEntity {
     public Apportionment() {
         this.code = RandomCode.alphanumeric(6);
     }
-    public Apportionment(BigDecimal value) {
-        this();
-        this.value = value;
-    }
+
     public Apportionment(BigDecimal value, MovementClass movementClass) {
         this();
         this.value = value;
         this.movementClass = movementClass;
         this.costCenter = movementClass.getCostCenter();
     }
+
     public boolean isRevenue() {
         return this.movementClass.isRevenue();
     }
