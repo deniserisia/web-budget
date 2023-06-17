@@ -16,14 +16,6 @@
  */
 package br.com.webbudget.domain.entities.financial;
 
-/**
- * The possible {@link CreditCardInvoice} states
- *
- * @author Arthur Gregorio
- *
- * @version 1.0.0
- * @since 3.0.0, 10/03/2019
- */
 public enum InvoiceState {
 
     CLOSED("invoice-state.closed"),
@@ -32,20 +24,10 @@ public enum InvoiceState {
 
     private final String description;
 
-    /**
-     * Constructor...
-     *
-     * @param description the description and also the i18n key
-     */
     InvoiceState(String description) {
         this.description = description;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
     @Override
     public String toString() {
         return this.description;
