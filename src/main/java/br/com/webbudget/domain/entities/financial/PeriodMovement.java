@@ -81,18 +81,11 @@ public class PeriodMovement extends Movement {
     @JoinColumn(name = "id_financial_period")
     @NotNull(message = "{period-movement.financial-period}")
     private FinancialPeriod financialPeriod;
-
-    /**
-     * Used at the credit card invoice to mark the movement and help the user to check the invoice
-     */
     @Getter
     @Setter
     @Transient
     private boolean checked;
 
-    /**
-     * Constructor...
-     */
     public PeriodMovement() {
         super();
         this.dueDate = LocalDate.now();
@@ -100,92 +93,40 @@ public class PeriodMovement extends Movement {
         this.periodMovementState = PeriodMovementState.OPEN;
     }
 
-    /**
-     * Get the payment date of this movement
-     *
-     * @return the payment date
-     */
     public LocalDate getPaymentDate() {
         return this.payment != null ? this.payment.getPaidOn() : null;
     }
 
-    /**
-     * To check if this movement is paid with a credit {@link Card}
-     *
-     * @return true if is, false if not
-     */
     public boolean isPaidWithCreditCard() {
         return this.payment != null && this.payment.isPaidWithCreditCard();
     }
 
-    /**
-     * To check if this movement is paid with a debit {@link Card}
-     *
-     * @return true if is, false if not
-     */
     public boolean isPaidWithDebitCard() {
         return this.payment != null && this.payment.isPaidWithDebitCard();
     }
 
-    /**
-     * To check if this movement is paid with a cash
-     *
-     * @return true if is, false if not
-     */
     public boolean isPaidWithCash() {
         return this.payment != null && this.payment.isPaidWithCash();
     }
 
-    /**
-     * To check if this movement is a {@link CreditCardInvoice}
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isCreditCardInvoice() {
         return this.periodMovementType == PeriodMovementType.CARD_INVOICE;
     }
 
-    /**
-     * To check if this movement is paid or not
-     *
-     * @return true if paid, false otherwise
-     */
     public boolean isPaid() {
         return this.periodMovementState == PeriodMovementState.PAID;
     }
-
-    /**
-     * To check if this movement is open or not
-     *
-     * @return true if paid, false otherwise
-     */
     public boolean isOpen() {
         return this.periodMovementState == PeriodMovementState.OPEN;
     }
-
-    /**
-     * To check if this movement is finalized or not
-     *
-     * @return true if paid, false otherwise
-     */
     public boolean isAccounted() {
         return this.periodMovementState == PeriodMovementState.ACCOUNTED;
     }
 
-    /**
-     * To check if this movement is overdue
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isOverdue() {
         return this.dueDate.isBefore(LocalDate.now());
     }
 
-    /**
-     * Helper method to get only the discount value
-     *
-     * @return the payment discount value
-     */
     public BigDecimal getValueWithDiscount() {
         return this.payment != null ? this.payment.getPaidValue() : this.getValue();
     }
