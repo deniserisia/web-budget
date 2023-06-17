@@ -16,14 +16,6 @@
  */
 package br.com.webbudget.domain.entities.financial;
 
-/**
- * The enum with the possible reasons for a {@link WalletBalance} update transaction
- *
- * @author Arthur Gregorio
- *
- * @version 1.0.0
- * @since 3.0.0, 19/08/2018
- */
 public enum ReasonType {
 
     RETURN("reason-type.return"),
@@ -35,20 +27,10 @@ public enum ReasonType {
 
     private final String description;
 
-    /**
-     * Default constructor
-     *
-     * @param description the description for this enum, also is the i18n key
-     */
     ReasonType(String description) {
         this.description = description;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
     @Override
     public String toString() {
         return this.description;
