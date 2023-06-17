@@ -76,46 +76,19 @@ public class Transference extends PersistentEntity {
     @NotNull(message = "{transference.destination}")
     @JoinColumn(name = "id_destination", nullable = false)
     private Wallet destination;
-
-    /**
-     * Constructor...
-     */
     public Transference() {
         this.transferDate = LocalDate.now();
     }
-
-    /**
-     * Get the origin wallet balance
-     *
-     * @return the actual balance
-     */
     public BigDecimal getOriginBalance() {
         return this.origin != null ? this.origin.getActualBalance() : BigDecimal.ZERO;
     }
-
-    /**
-     * Get the destination wallet balance
-     *
-     * @return the actual balance
-     */
     public BigDecimal getDestinationBalance() {
         return this.destination != null ? this.destination.getActualBalance() : BigDecimal.ZERO;
     }
-
-    /**
-     * Helper method to check the current status of the current balance on the origin
-     *
-     * @return true if the balance is negative, false otherwise
-     */
     public boolean isOriginNegative() {
         return this.getOriginBalance().signum() < 0;
     }
 
-    /**
-     * Helper method to check the current status of the current balance on the destination
-     *
-     * @return true if the balance is negative, false otherwise
-     */
     public boolean isDestinationNegative() {
         return this.getDestinationBalance().signum() < 0;
     }
