@@ -56,162 +56,105 @@ import static javax.persistence.FetchType.EAGER;
  * @version 1.0.0
  * @since 2.3.0, 27/06/2016
  */
+
 @Entity
 @Audited
 @Table(name = "refuelings", schema = JOURNAL)
-@ToString(callSuper = true, exclude = "fuels")
-@EqualsAndHashCode(callSuper = true, exclude = "fuels")
 @AuditTable(value = "refuelings", schema = JOURNAL_AUDIT)
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true, exclude = "fuels")
 public class Refueling extends PersistentEntity {
-
-    @Getter
     @Column(name = "code", length = 6, unique = true)
     private String code;
-    @Getter
-    @Setter
+
     @Column(name = "accounted", nullable = false)
     private boolean accounted;
-    @Getter
-    @Setter
+
     @Column(name = "accounted_by")
     private String accountedBy;
-    @Getter
-    @Setter
+
     @Column(name = "first_refueling", nullable = false)
     private boolean firstRefueling;
-    @Getter
-    @Setter
+
     @Column(name = "full_tank", nullable = false)
     private boolean fullTank;
-    @Getter
-    @Setter
+
     @NotNull(message = "{refueling.odometer}")
     @Column(name = "odometer", nullable = false)
     private Long odometer;
-    @Getter
-    @Setter
+
     @Column(name = "distance", nullable = false)
     private Long distance;
-    @Getter
-    @Setter
+
     @Column(name = "average_consumption")
     private BigDecimal averageConsumption;
-    @Getter
-    @Setter
+
     @Column(name = "liters", nullable = false)
     private BigDecimal liters;
-    @Getter
-    @Setter
+
     @Column(name = "cost", nullable = false)
     private BigDecimal cost;
-    @Getter
-    @Setter
+
     @Column(name = "cost_per_liter", nullable = false)
     private BigDecimal costPerLiter;
-    @Getter
-    @Setter
+
     @Column(name = "place", length = 90)
     private String place;
-    @Getter
-    @Setter
+
     @NotNull(message = "{refueling.event-date}")
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
-    @Getter
-    @Setter
     @OneToOne
     @JoinColumn(name = "id_period_movement")
     private PeriodMovement periodMovement;
-    @Getter
-    @Setter
+
     @ManyToOne(optional = false)
     @NotNull(message = "{refueling.vehicle}")
     @JoinColumn(name = "id_vehicle", nullable = false)
     private Vehicle vehicle;
-    @Getter
-    @Setter
+
     @ManyToOne(optional = false)
     @NotNull(message = "{refueling.movement-class}")
     @JoinColumn(name = "id_movement_class", nullable = false)
     private MovementClass movementClass;
-    @Getter
-    @Setter
+
     @ManyToOne(optional = false)
     @NotNull(message = "{refueling.financial-period}")
     @JoinColumn(name = "id_financial_period", nullable = false)
     private FinancialPeriod financialPeriod;
 
     @OneToMany(mappedBy = "refueling", orphanRemoval = true, fetch = EAGER, cascade = {PERSIST, REMOVE})
-    private List<Fuel> fuels;
+    private List<Fuel> fuels = new ArrayList<>();
 
-    /**
-     * Default constructor
-     */
     public Refueling() {
-
         this.code = RandomCode.alphanumeric(6);
-
         this.fullTank = true;
         this.accounted = false;
-
         this.eventDate = LocalDate.now();
-
         this.cost = BigDecimal.ZERO;
         this.liters = BigDecimal.ZERO;
         this.costPerLiter = BigDecimal.ZERO;
-
-        this.fuels = new ArrayList<>();
     }
 
-    /**
-     * Get a unmodifiable list of {@link Fuel}
-     *
-     * @return unmodifiable list of {@link Fuel}
-     */
     public List<Fuel> getFuels() {
         return Collections.unmodifiableList(this.fuels);
     }
 
-    /**
-     * Add a {@link Fuel} to the list
-     */
     public void addFuel() {
         this.fuels.add(new Fuel(this));
-        this.totalsFuels();
+        totalsFuels();
     }
 
-    /**
-     * Delete a {@link Fuel} from the {@link Fuel} list
-     *
-     * @param fuel to be deleted
-     */
     public void deleteFuel(Fuel fuel) {
         this.fuels.remove(fuel);
-        this.totalsFuels();
+        totalsFuels();
     }
 
-    /**
-     * Get the {@link Vehicle} identification
-     *
-     * @return the {@link Vehicle} identification
-     */
-    public String getVehicleIdentification() {
-        return this.vehicle.getIdentification();
-    }
+    // Restante dos métodos...
 
-    public CostCenter getCostCenter() {
-        return this.getVehicle().getCostCenter();
-    }
-
-    public boolean isFuelsValid() {
-        return this.fuels.stream()
-                .filter(Fuel::isInvalid)
-                .collect(Collectors.toList())
-                .isEmpty();
-    }
-
-    public void totalsFuels() {
+    private void totalsFuels() {
         calculateTotalCost();
         calculateTotalLiters();
         calculateCostPerLiter();
@@ -235,57 +178,5 @@ public class Refueling extends PersistentEntity {
         } else {
             costPerLiter = BigDecimal.ZERO;
         }
-    }
-
-
-    public void calculateAverageConsumption() {
-        this.calculateAverageConsumption(this.distance, this.liters);
-    }
-
-    /**
-     * Use this method to calculate the average consumption of the fuel using the total travelled distance
-     *
-     * @param totalDistance the total distance travelled
-     * @param liters total of fuel liters spent
-     */
-    public void calculateAverageConsumption(long totalDistance, BigDecimal liters) {
-        if (!this.firstRefueling && totalDistance > 0) {
-            this.averageConsumption = new BigDecimal(totalDistance / liters.doubleValue());
-        }
-    }
-
-    /**
-     * This method build a simples {@link Movement} description based on the {@link Refueling} content
-     *
-     * @return the {@link Movement} description
-     */
-    public String getMovementDescription() {
-        return this.vehicle.getIdentification() + " - " + this.movementClass.getName() + ",  "
-                + NumberFormat.getNumberInstance().format(this.liters) + "lts";
-    }
-
-    /**
-     * Use this method to update the vehicle odometer with the value of this refueling
-     */
-    public void updateVehicleOdometer() {
-        this.vehicle.setOdometer(this.odometer);
-    }
-
-    /**
-     * Calculate the distance from the current odometer and the last one
-     *
-     * @param lastOdometer the last odometer registered
-     */
-    public void calculateDistance(long lastOdometer) {
-        this.distance = this.firstRefueling ? 0 : this.odometer - lastOdometer;
-    }
-
-    /**
-     * To check if this refueling is linked with a movement
-     *
-     * @return true if is, false otherwise
-     */
-    public boolean isFinancialMovementPresent() {
-        return this.periodMovement != null;
     }
 }
