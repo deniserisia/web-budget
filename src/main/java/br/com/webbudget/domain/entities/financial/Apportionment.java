@@ -34,14 +34,7 @@ import java.math.BigDecimal;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL_AUDIT;
 
-/**
- * The representation of an apportionment of a {@link Movement}
- *
- * @author Arthur Gregorio
- *
- * @version 1.0.0
- * @since 1.0.0, 02/02/2015
- */
+
 @Entity
 @Audited
 @ToString(callSuper = true)
@@ -77,29 +70,14 @@ public class Apportionment extends PersistentEntity {
     @JoinColumn(name = "id_movement_class", nullable = false)
     private MovementClass movementClass;
 
-    /**
-     * Constructor...
-     */
     public Apportionment() {
         this.code = RandomCode.alphanumeric(6);
     }
 
-    /**
-     * Constructor
-     *
-     * @param value the value of the apportionment
-     */
     public Apportionment(BigDecimal value) {
         this();
         this.value = value;
     }
-
-    /**
-     * Constructor...
-     *
-     * @param value the value of this apportionment
-     * @param movementClass the apportionment {@link MovementClass} we use this to take the {@link CostCenter}
-     */
     public Apportionment(BigDecimal value, MovementClass movementClass) {
         this();
         this.value = value;
@@ -107,59 +85,25 @@ public class Apportionment extends PersistentEntity {
         this.costCenter = movementClass.getCostCenter();
     }
 
-    /**
-     * To check if this apportionment is an income
-     *
-     * @return true if it is a revenue
-     */
     public boolean isRevenue() {
         return this.movementClass.isRevenue();
     }
 
-    /**
-     * To check if this apportionment is an expense
-     *
-     * @return true if it is a expense
-     */
     public boolean isExpense() {
         return this.movementClass.isExpense();
     }
 
-    /**
-     * Get the {@link MovementClass} name
-     *
-     * @return the name if {@link MovementClass} is not null
-     */
     public String getMovementClassName() {
         return this.movementClass != null ? this.movementClass.getName() : "";
     }
-
-    /**
-     * Get the {@link CostCenter} name
-     *
-     * @return the name if the {@link CostCenter} is not null
-     */
     public String getCostCenterName() {
         return this.costCenter != null ? this.costCenter.getName() : "";
     }
 
-    /**
-     * Compare if the given apportionment has the same {@link CostCenter} and {@link MovementClass}
-     *
-     * @param apportionment the instance to be compared
-     * @return true if is the same {@link CostCenter} and {@link MovementClass}, false otherwise
-     */
     public boolean isCostCenterAndMovementClassEquals(Apportionment apportionment) {
         return apportionment.getCostCenter().equals(this.costCenter)
                 && apportionment.getMovementClass().equals(this.movementClass);
     }
-
-    /**
-     * Method used to copy an apportionment to another
-     *
-     * @param toCopy apportionment to be copied
-     * @return an entire new apportionment
-     */
     public static Apportionment copyOf(Apportionment toCopy){
         return new Apportionment(toCopy.getValue(), toCopy.getMovementClass());
     }
