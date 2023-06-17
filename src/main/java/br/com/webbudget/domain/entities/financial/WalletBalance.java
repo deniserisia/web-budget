@@ -34,14 +34,6 @@ import java.time.LocalDateTime;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL;
 import static br.com.webbudget.infrastructure.utils.DefaultSchemes.FINANCIAL_AUDIT;
 
-/**
- * The entity representation of a wallet balance
- *
- * @author Arthur Gregorio
- *
- * @version 1.0.0
- * @since 1.0.0, 20/05/2014
- */
 @Entity
 @Audited
 @ToString(callSuper = true)
@@ -94,11 +86,6 @@ public class WalletBalance extends PersistentEntity {
     @JoinColumn(name = "id_wallet", nullable = false)
     private Wallet wallet;
 
-    /**
-     * Process the balances of this balance when requested
-     *
-     * Use this after set a new actual balance
-     */
     public void processBalances() {
         
         // calculate the actual and the old balance
@@ -108,111 +95,46 @@ public class WalletBalance extends PersistentEntity {
         // update the actual balance of wallet
         this.wallet.setActualBalance(this.actualBalance);
     }
-
-    /**
-     * Helper method to get only the date of the transaction
-     *
-     * @return the day only
-     */
     public LocalDate getMovementDate() {
         return this.movementDateTime.toLocalDate();
     }
-
-    /**
-     * Helper to check if the old balance is negative
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isOldBalanceNegative() {
         return this.oldBalance.signum() < 0;
     }
 
-    /**
-     * Helper to check if the actual balance is negative
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isActualBalanceNegative() {
         return this.actualBalance.signum() < 0;
     }
 
-    /**
-     * Helper to check if the transaction value is negative
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isTransactionValueNegative() {
         return this.transactionValue.signum() < 0;
     }
 
-    /**
-     * Helper method to check if this balance is debit or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isDebit() {
         return this.balanceType == BalanceType.DEBIT;
     }
 
-    /**
-     * Helper method to check if this balance is credit or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isCredit() {
         return this.balanceType == BalanceType.CREDIT;
     }
 
-    /**
-     * Helper method to check if this balance is a revenue or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isRevenue() {
         return this.reasonType == ReasonType.REVENUE;
     }
 
-    /**
-     * Helper method to check if this balance is a expense or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isExpense() {
         return this.reasonType == ReasonType.EXPENSE;
     }
 
-    /**
-     * Helper method to check if this balance is a debit card payment or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isDebitCard() {
         return this.reasonType == ReasonType.DEBIT_CARD;
     }
-
-    /**
-     * Helper method to check if this balance is a transference or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isTransference() {
         return this.reasonType == ReasonType.TRANSFERENCE;
     }
-
-    /**
-     * Helper method to check if this balance is a adjustment or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isAdjustment() {
         return this.reasonType == ReasonType.ADJUSTMENT;
     }
-
-    /**
-     * Helper method to check if this balance is a return of value or not
-     *
-     * @return true if is, false otherwise
-     */
     public boolean isReturn() {
         return this.reasonType == ReasonType.RETURN;
     }
